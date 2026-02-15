@@ -5,10 +5,12 @@ import Link from 'next/link'
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false)
+  const [hideBar, setHideBar] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50)
+      setHideBar(window.scrollY > 100)
     }
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
@@ -26,17 +28,21 @@ export default function Header() {
 
   return (
     <>
-      {/* Barra de urgência */}
-      <div className="bg-primary text-white text-center py-2 px-4 text-sm">
+      {/* Barra de urgência - fixa com hide on scroll */}
+      <div
+        className={`fixed top-0 left-0 right-0 z-[60] bg-primary text-white text-center py-2 px-4 text-sm transition-transform duration-300 ${
+          hideBar ? '-translate-y-full' : 'translate-y-0'
+        }`}
+      >
         <span className="opacity-90">
           A Receita pode fiscalizar os últimos <strong>5 anos</strong>. Você sabe se está tudo certo?
         </span>
       </div>
 
       <header
-        className={`fixed top-[36px] left-0 right-0 z-50 bg-cream/95 backdrop-blur-sm border-b border-border py-4 transition-all duration-250 ${
+        className={`fixed left-0 right-0 z-50 bg-cream/95 backdrop-blur-sm border-b border-border py-4 transition-all duration-300 ${
           scrolled ? 'shadow-md' : ''
-        }`}
+        } ${hideBar ? 'top-0' : 'top-[36px]'}`}
       >
         <div className="w-full max-w-[1200px] mx-auto px-6">
           <div className="flex items-center justify-between">

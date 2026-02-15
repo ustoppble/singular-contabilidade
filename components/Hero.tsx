@@ -53,7 +53,7 @@ export default function Hero() {
               <a
                 href="#oferta"
                 onClick={(e) => handleSmoothScroll(e, '#oferta')}
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-primary text-white font-semibold rounded-lg hover:bg-primary-light hover:-translate-y-0.5 hover:shadow-lg transition-all duration-250"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-secondary text-primary font-semibold rounded-lg hover:bg-accent hover:-translate-y-0.5 hover:shadow-lg transition-all duration-250"
               >
                 Quero meu diagnóstico
                 <svg
@@ -111,13 +111,13 @@ export default function Hero() {
             </div>
 
             {/* Floating card 1 */}
-            <div className="absolute top-[15%] -right-5 bg-white rounded-2xl p-4 shadow-lg">
+            <div className="absolute top-[15%] -right-5 bg-white rounded-2xl p-4 shadow-lg animate-float">
               <div className="text-xs text-text-muted mb-1">Economia média</div>
               <div className="font-display text-2xl text-success">R$ 8.000</div>
             </div>
 
             {/* Floating card 2 */}
-            <div className="absolute bottom-[20%] -left-8 bg-white rounded-2xl p-4 shadow-lg">
+            <div className="absolute bottom-[20%] -left-8 bg-white rounded-2xl p-4 shadow-lg animate-float-delayed">
               <div className="text-xs text-text-muted mb-1">Clientes satisfeitos</div>
               <div className="font-display text-2xl text-primary">98%</div>
             </div>
