@@ -1,9 +1,16 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_KEY!
-);
+let _supabase: SupabaseClient | null = null;
+
+function getSupabase(): SupabaseClient {
+  if (!_supabase) {
+    _supabase = createClient(
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_KEY!
+    );
+  }
+  return _supabase;
+}
 
 export interface ReelsTheme {
   id: string;
@@ -26,7 +33,7 @@ export async function getThemes(filters?: {
   year?: number;
   limit?: number;
 }): Promise<ReelsTheme[]> {
-  let query = supabase
+  let query = getSupabase()
     .from("reels_themes")
     .select("*")
     .order("relevance_score", { ascending: false });
@@ -42,7 +49,7 @@ export async function getThemes(filters?: {
 }
 
 export async function getStats() {
-  const { data: all } = await supabase
+  const { data: all } = await getSupabase()
     .from("reels_themes")
     .select("id, status, relevance_score, week_number, year");
 
@@ -73,7 +80,7 @@ export async function getStats() {
 const KANBAN_STATUSES = ["produced", "script", "approved", "recorded", "edited", "posted"];
 
 export async function getKanbanThemes(): Promise<ReelsTheme[]> {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from("reels_themes")
     .select("*")
     .in("status", KANBAN_STATUSES)
@@ -87,7 +94,7 @@ export async function updateThemeStatus(
   id: string,
   status: string
 ): Promise<void> {
-  const { error } = await supabase
+  const { error } = await getSupabase()
     .from("reels_themes")
     .update({ status })
     .eq("id", id);
