@@ -1,0 +1,88 @@
+[pipeline]
+name = "content-machine"
+version = "1.0.0"
+description = "Pipeline automatizado de produção de Reels para Singular Contabilidade"
+output_dir = "output/reels"
+log_dir = "../.claude-flow/logs"
+
+[pipeline.schedule]
+weekly_scan = "monday 08:00"
+monthly_scan = "first monday 08:00"
+generation = "tuesday 09:00"
+
+[agents.scout]
+script = "agents/scout.py"
+description = "Descobre trends via Perplexity API"
+max_results_per_topic = 5
+weekly_depth = "quick"
+monthly_depth = "deep"
+
+[agents.scout.topics]
+queries = [
+    "MEI microempreendedor individual novidades legislacao 2026",
+    "Simples Nacional mudancas regras tributacao",
+    "Receita Federal fiscalizacao MEI multas",
+    "tributacao pequenas empresas Brasil atualizacao",
+    "DAS MEI pagamento atraso consequencias",
+    "DASN-SIMEI declaracao anual MEI prazo",
+    "limite faturamento MEI 2026 aumento",
+    "nota fiscal MEI obrigatoriedade emissao",
+]
+
+[agents.curator]
+script = "agents/curator.py"
+description = "Banco de temas e checagem de duplicatas"
+supabase_table = "reels_themes"
+sqlite_path = "../.claude-flow/data/curator.db"
+dedup_similarity_threshold = 0.80
+
+[agents.strategist]
+script = "agents/strategist.py"
+description = "Filtra e rankeia temas por relevância pro avatar"
+themes_per_week = 5
+min_relevance_score = 0.6
+
+[agents.strategist.avatar]
+persona = "MEI brasileiro"
+revenue_range = "R$50k-R$150k/ano"
+age_range = "25-45"
+content_channel = "Instagram Reels"
+fears = [
+    "fiscalizacao Receita Federal",
+    "multas e penalidades",
+    "desenquadramento do MEI",
+    "malha fina",
+    "fechar a empresa",
+]
+knowledge_gaps = [
+    "regras tributarias do Simples",
+    "obrigacoes acessorias MEI",
+    "limites de faturamento",
+    "quando migrar pra ME",
+    "DAS e DASN prazos",
+    "nota fiscal obrigatoria",
+]
+
+[agents.auditor]
+script = "agents/auditor.py"
+description = "Verifica veracidade factual dos temas via Perplexity"
+min_confidence = 0.6
+reject_status = ["projeto_de_lei", "nao_confirmado", "erro_verificacao"]
+
+[agents.writer]
+script = "agents/writer.py"
+description = "Gera roteiros de Reels via Claude API"
+model = "claude-sonnet-4-20250514"
+temperature = 0.7
+max_tokens = 1500
+
+[agents.writer.script_format]
+hook_seconds = 2
+context_seconds = 10
+sections = ["hook", "contexto", "virada", "cta"]
+cta_target = "diagnostico contabil gratuito"
+tone = "conversacional, simples, empatico"
+language = "pt-BR"
+
+[pipeline.sequence]
+steps = ["scout", "curator_validate", "strategist", "auditor", "writer", "curator_register"]

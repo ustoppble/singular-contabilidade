@@ -1,0 +1,50 @@
+[
+  {
+    "id": null,
+    "title": "Desenquadramento Automático por Subdeclaração na DASN-SIMEI",
+    "angle": "medo — Receita Federal fiscalizacao MEI multas",
+    "source_trend": "A Receita está desenquadrando MEIs automaticamente ao detectar faturamento menor na Declaração Anual (DASN-SIMEI) comparado a dados de transações. Prazo para 2026 é 31 de maio, com multas mínimas de R$50 ou 2% ao mês, impedindo emissão de DAS. MEIs comuns ignoram que omissões bloqueiam guias mensais.\n\nCORRECAO DO AUDITOR: Não há desenquadramento automático por subdeclaração ou faturamento menor na DASN-SIMEI comparado a dados de transações; motivos automáticos são outros (ex.: atividade vedada, filial). Não entrega da DASN pode levar a desenquadramento, mas não impede emissão de DAS.",
+    "status": "produced",
+    "relevance_score": 0.807,
+    "week_number": 8,
+    "year": 2026,
+    "script_path": "/Users/laschuk/vibe-coding/singular/content-machine/output/reels/2026/semana-08/desenquadramento-automatico-por-subdeclaracao-na-dasn-simei.md",
+    "produced_at": "2026-02-22T21:01:04.677179+00:00"
+  },
+  {
+    "id": null,
+    "title": "Intensificação da Fiscalização da Receita: 3,9 Milhões de MEIs Excluídos em 2025",
+    "angle": "medo — Receita Federal fiscalizacao MEI multas",
+    "source_trend": "Em 2025, a Receita Federal excluiu ou desenquadrou 3.942.902 MEIs por irregularidades detectadas via cruzamento de dados de PIX, cartões e notas fiscais. Principais fraudes incluem ocultação de faturamento e divisão de receitas entre CNPJs, resultando em multas de até 75% e desenquadramento retroativo. Isso surpreende MEIs que subestimam o poder de análise digital do Fisco.",
+    "status": "produced",
+    "relevance_score": 0.745,
+    "week_number": 8,
+    "year": 2026,
+    "script_path": "/Users/laschuk/vibe-coding/singular/content-machine/output/reels/2026/semana-08/intensificacao-da-fiscalizacao-da-receita-3-9-milhoes-de-mei.md",
+    "produced_at": "2026-02-22T21:01:04.677179+00:00"
+  },
+  {
+    "id": null,
+    "title": "Atualização DAS-MEI 2026 e Riscos de Exclusão por Débitos",
+    "angle": "curiosidade — Receita Federal fiscalizacao MEI multas",
+    "source_trend": "Valores DAS subiram para R$81,05 (INSS) + R$5 ISS em 2026; débitos levam a exclusão automática do Simples Nacional. Combinado à soma de rendas CPF/CNPJ no limite MEI, isso pressiona regularidade. MEIs subestimam o desenquadramento por atrasos simples.",
+    "status": "produced",
+    "relevance_score": 0.745,
+    "week_number": 8,
+    "year": 2026,
+    "script_path": "/Users/laschuk/vibe-coding/singular/content-machine/output/reels/2026/semana-08/atualizacao-das-mei-2026-e-riscos-de-exclusao-por-debitos.md",
+    "produced_at": "2026-02-22T21:01:04.677179+00:00"
+  },
+  {
+    "id": null,
+    "title": "6 exigências fiscais em 2026 para evitar desenquadramento do MEI",
+    "angle": "medo — DAS MEI pagamento atraso consequencias",
+    "source_trend": "MEIs devem cumprir 6 obrigações em 2026, como DASN-SIMEI até maio (multa de R$50 mínimo por atraso), para não serem desenquadrados – tendência de fiscalização mais rígida que surpreende inativos sem faturamento. Atraso impede emissão de DAS e leva a regimes tributários mais caros. MEI inativo ainda paga DAS zerada.",
+    "status": "produced",
+    "relevance_score": 0.745,
+    "week_number": 8,
+    "year": 2026,
+    "script_path": "/Users/laschuk/vibe-coding/singular/content-machine/output/reels/2026/semana-08/6-exigencias-fiscais-em-2026-para-evitar-desenquadramento-do.md",
+    "produced_at": "2026-02-22T21:01:04.677179+00:00"
+  }
+]
