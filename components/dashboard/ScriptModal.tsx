@@ -13,13 +13,16 @@ const SECTION_ICONS: Record<string, { label: string; color: string }> = {
 interface ScriptModalProps {
   script: ScriptFile | null;
   onClose: () => void;
+  onDelete?: (slug: string) => void;
 }
 
-export default function ScriptModal({ script, onClose }: ScriptModalProps) {
+export default function ScriptModal({ script, onClose, onDelete }: ScriptModalProps) {
   const [editing, setEditing] = useState(false);
   const [editedSections, setEditedSections] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<"idle" | "saved" | "error">("idle");
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -34,6 +37,7 @@ export default function ScriptModal({ script, onClose }: ScriptModalProps) {
       setEditedSections({ ...script.sections });
       setEditing(false);
       setSaveStatus("idle");
+      setConfirmDelete(false);
     }
   }, [script]);
 
@@ -83,6 +87,31 @@ export default function ScriptModal({ script, onClose }: ScriptModalProps) {
     }
   }
 
+  async function handleDelete() {
+    if (!confirmDelete) {
+      setConfirmDelete(true);
+      return;
+    }
+    setDeleting(true);
+    try {
+      const res = await fetch(
+        `/api/scripts?slug=${encodeURIComponent(script!.slug)}&week=${frontmatter.week}&year=${frontmatter.year}`,
+        { method: "DELETE" }
+      );
+      if (res.ok) {
+        onDelete?.(script!.slug);
+        onClose();
+      } else {
+        setSaveStatus("error");
+      }
+    } catch {
+      setSaveStatus("error");
+    } finally {
+      setDeleting(false);
+      setConfirmDelete(false);
+    }
+  }
+
   const displaySections = editing ? editedSections : sections;
 
   return (
@@ -115,6 +144,23 @@ export default function ScriptModal({ script, onClose }: ScriptModalProps) {
             </div>
             <div className="flex items-center gap-2 shrink-0">
               {!editing ? (
+                <>
+                <button
+                  onClick={handleDelete}
+                  disabled={deleting}
+                  className={`h-8 flex items-center justify-center rounded-full transition-all text-xs px-2 ${
+                    confirmDelete
+                      ? "bg-red-100 text-red-600 hover:bg-red-200"
+                      : "hover:bg-black/5 text-text-muted"
+                  }`}
+                  title="Deletar"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="3 6 5 6 21 6" />
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                  </svg>
+                  {confirmDelete && <span className="ml-1">{deleting ? "..." : "Confirmar?"}</span>}
+                </button>
                 <button
                   onClick={handleEdit}
                   className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-black/5 transition-all text-text-muted"
@@ -125,6 +171,7 @@ export default function ScriptModal({ script, onClose }: ScriptModalProps) {
                     <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                   </svg>
                 </button>
+                </>
               ) : (
                 <>
                   <button

@@ -1,7 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getScripts } from "@/lib/content-reader";
+import fs from "fs/promises";
+import path from "path";
 
 export const dynamic = "force-dynamic";
+
+const REELS_DIR = path.join(
+  process.cwd(),
+  "content-machine",
+  "output",
+  "reels"
+);
 
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
@@ -40,6 +49,38 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       { error: "Falha ao buscar scripts" },
       { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  const { searchParams } = request.nextUrl;
+  const slug = searchParams.get("slug");
+  const week = searchParams.get("week");
+  const year = searchParams.get("year");
+
+  if (!slug || !week || !year) {
+    return NextResponse.json(
+      { error: "slug, week e year sao obrigatorios" },
+      { status: 400 }
+    );
+  }
+
+  const filePath = path.join(
+    REELS_DIR,
+    year,
+    `semana-${String(week).padStart(2, "0")}`,
+    `${slug}.md`
+  );
+
+  try {
+    await fs.access(filePath);
+    await fs.unlink(filePath);
+    return NextResponse.json({ success: true });
+  } catch {
+    return NextResponse.json(
+      { error: "Arquivo nao encontrado" },
+      { status: 404 }
     );
   }
 }

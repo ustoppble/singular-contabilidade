@@ -9,8 +9,14 @@ interface Props {
   scripts: ScriptFile[];
 }
 
-export default function ScriptsGrid({ scripts }: Props) {
+export default function ScriptsGrid({ scripts: initialScripts }: Props) {
+  const [scripts, setScripts] = useState(initialScripts);
   const [selected, setSelected] = useState<ScriptFile | null>(null);
+
+  function handleDelete(slug: string) {
+    setScripts((prev) => prev.filter((s) => s.slug !== slug));
+    setSelected(null);
+  }
 
   return (
     <>
@@ -32,7 +38,11 @@ export default function ScriptsGrid({ scripts }: Props) {
         </div>
       )}
 
-      <ScriptModal script={selected} onClose={() => setSelected(null)} />
+      <ScriptModal
+        script={selected}
+        onClose={() => setSelected(null)}
+        onDelete={handleDelete}
+      />
     </>
   );
 }
