@@ -106,7 +106,21 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <div className="mt-auto pt-6 border-t border-white/10">
+      <div className="mt-auto pt-6 border-t border-white/10 space-y-2">
+        <Link
+          href="/dashboard/prompts"
+          className={`flex items-center gap-2 text-xs transition-all ${
+            pathname.startsWith("/dashboard/prompts")
+              ? "text-secondary"
+              : "text-white/50 hover:text-white/70"
+          }`}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 20h9" />
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+          </svg>
+          Prompts
+        </Link>
         <Link
           href="/"
           className="flex items-center gap-2 text-white/50 text-xs hover:text-white/70 transition-all"

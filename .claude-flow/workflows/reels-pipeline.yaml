@@ -1,0 +1,43 @@
+name: reels-content-pipeline
+description: Weekly Reels content production for Singular Contabilidade
+version: "1.0.0"
+
+triggers:
+  - schedule: "weekly"
+  - manual: true
+
+agents:
+  - reels-scout
+  - reels-curator
+  - reels-strategist
+  - reels-writer
+
+steps:
+  - name: discover-trends
+    agent: reels-scout
+    type: sequential
+    timeout: 300
+
+  - name: validate-themes
+    agent: reels-curator
+    type: sequential
+    depends_on: [discover-trends]
+    timeout: 60
+
+  - name: rank-themes
+    agent: reels-strategist
+    type: sequential
+    depends_on: [validate-themes]
+    timeout: 120
+
+  - name: generate-scripts
+    agent: reels-writer
+    type: sequential
+    depends_on: [rank-themes]
+    timeout: 600
+
+  - name: register-content
+    agent: reels-curator
+    type: sequential
+    depends_on: [generate-scripts]
+    timeout: 60

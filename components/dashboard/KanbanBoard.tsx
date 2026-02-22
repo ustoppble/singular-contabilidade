@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import {
   DndContext,
   DragOverlay,
@@ -15,7 +15,9 @@ import {
 import { arrayMove } from "@dnd-kit/sortable";
 import KanbanColumn from "./KanbanColumn";
 import KanbanCard from "./KanbanCard";
+import ScriptModal from "./ScriptModal";
 import type { ReelsTheme } from "@/lib/supabase-server";
+import type { ScriptFile } from "@/lib/content-reader";
 
 const COLUMNS = [
   { id: "script", title: "Roteiro", colorClass: "bg-secondary/10" },
@@ -30,10 +32,15 @@ type ColumnId = (typeof COLUMNS)[number]["id"];
 type ColumnMap = Record<ColumnId, ReelsTheme[]>;
 
 function buildColumnMap(themes: ReelsTheme[]): ColumnMap {
-  const map: ColumnMap = { script: [], approved: [], recorded: [], edited: [], posted: [] };
+  const map: ColumnMap = {
+    script: [],
+    approved: [],
+    recorded: [],
+    edited: [],
+    posted: [],
+  };
 
   for (const theme of themes) {
-    // "produced" from pipeline maps to "script" column
     const status =
       theme.status === "produced" ? "script" : (theme.status as ColumnId);
     if (status in map) {
@@ -51,19 +58,49 @@ function findColumn(columns: ColumnMap, themeId: string): ColumnId | null {
   return null;
 }
 
+interface KanbanBoardProps {
+  initialThemes: ReelsTheme[];
+  weeks: { year: number; week: number }[];
+}
+
 export default function KanbanBoard({
   initialThemes,
-}: {
-  initialThemes: ReelsTheme[];
-}) {
+  weeks,
+}: KanbanBoardProps) {
+  const [allThemes] = useState(initialThemes);
+  const [selectedWeek, setSelectedWeek] = useState<string>("all");
   const [columns, setColumns] = useState<ColumnMap>(() =>
     buildColumnMap(initialThemes)
   );
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [selectedScript, setSelectedScript] = useState<ScriptFile | null>(null);
+  const [loadingScript, setLoadingScript] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
   );
+
+  // Filter columns by selected week
+  const filteredColumns = useMemo(() => {
+    if (selectedWeek === "all") return columns;
+
+    const [year, week] = selectedWeek.split("-").map(Number);
+    const filtered: ColumnMap = {
+      script: [],
+      approved: [],
+      recorded: [],
+      edited: [],
+      posted: [],
+    };
+
+    for (const col of COLUMNS) {
+      filtered[col.id] = columns[col.id].filter(
+        (t) => t.year === year && t.week_number === week
+      );
+    }
+
+    return filtered;
+  }, [columns, selectedWeek]);
 
   const activeTheme = activeId
     ? Object.values(columns)
@@ -75,38 +112,39 @@ export default function KanbanBoard({
     setActiveId(event.active.id as string);
   }, []);
 
-  const handleDragOver = useCallback((event: DragOverEvent) => {
-    const { active, over } = event;
-    if (!over) return;
+  const handleDragOver = useCallback(
+    (event: DragOverEvent) => {
+      const { active, over } = event;
+      if (!over) return;
 
-    const activeCol = findColumn(columns, active.id as string);
-    // over.id can be a column id or a card id
-    let overCol: ColumnId | null =
-      (over.id as string) in columns
-        ? (over.id as ColumnId)
-        : findColumn(columns, over.id as string);
+      const activeCol = findColumn(columns, active.id as string);
+      const overCol: ColumnId | null =
+        (over.id as string) in columns
+          ? (over.id as ColumnId)
+          : findColumn(columns, over.id as string);
 
-    if (!activeCol || !overCol || activeCol === overCol) return;
+      if (!activeCol || !overCol || activeCol === overCol) return;
 
-    setColumns((prev) => {
-      const activeItems = [...prev[activeCol]];
-      const overItems = [...prev[overCol!]];
-      const activeIndex = activeItems.findIndex(
-        (t) => t.id === (active.id as string)
-      );
-      const [moved] = activeItems.splice(activeIndex, 1);
+      setColumns((prev) => {
+        const activeItems = [...prev[activeCol]];
+        const overItems = [...prev[overCol!]];
+        const activeIndex = activeItems.findIndex(
+          (t) => t.id === (active.id as string)
+        );
+        const [moved] = activeItems.splice(activeIndex, 1);
 
-      // Find insertion index
-      const overIndex = overItems.findIndex(
-        (t) => t.id === (over.id as string)
-      );
-      const insertIndex = overIndex >= 0 ? overIndex : overItems.length;
+        const overIndex = overItems.findIndex(
+          (t) => t.id === (over.id as string)
+        );
+        const insertIndex = overIndex >= 0 ? overIndex : overItems.length;
 
-      overItems.splice(insertIndex, 0, moved);
+        overItems.splice(insertIndex, 0, moved);
 
-      return { ...prev, [activeCol]: activeItems, [overCol!]: overItems };
-    });
-  }, [columns]);
+        return { ...prev, [activeCol]: activeItems, [overCol!]: overItems };
+      });
+    },
+    [columns]
+  );
 
   const handleDragEnd = useCallback(
     async (event: DragEndEvent) => {
@@ -118,17 +156,25 @@ export default function KanbanBoard({
       const activeCol = findColumn(columns, active.id as string);
       if (!activeCol) return;
 
-      // Same column reorder
-      if (active.id !== over.id && findColumn(columns, over.id as string) === activeCol) {
+      if (
+        active.id !== over.id &&
+        findColumn(columns, over.id as string) === activeCol
+      ) {
         setColumns((prev) => {
           const items = [...prev[activeCol]];
-          const oldIndex = items.findIndex((t) => t.id === (active.id as string));
-          const newIndex = items.findIndex((t) => t.id === (over.id as string));
-          return { ...prev, [activeCol]: arrayMove(items, oldIndex, newIndex) };
+          const oldIndex = items.findIndex(
+            (t) => t.id === (active.id as string)
+          );
+          const newIndex = items.findIndex(
+            (t) => t.id === (over.id as string)
+          );
+          return {
+            ...prev,
+            [activeCol]: arrayMove(items, oldIndex, newIndex),
+          };
         });
       }
 
-      // Persist status change to Supabase
       try {
         await fetch("/api/kanban", {
           method: "PATCH",
@@ -142,33 +188,84 @@ export default function KanbanBoard({
     [columns]
   );
 
+  const handleCardClick = useCallback(async (theme: ReelsTheme) => {
+    setLoadingScript(true);
+    try {
+      const params = new URLSearchParams({
+        week: String(theme.week_number),
+        year: String(theme.year),
+        title: theme.title,
+      });
+      const res = await fetch(`/api/scripts?${params}`);
+      if (res.ok) {
+        const script: ScriptFile = await res.json();
+        setSelectedScript(script);
+      }
+    } catch (err) {
+      console.error("Falha ao carregar roteiro:", err);
+    } finally {
+      setLoadingScript(false);
+    }
+  }, []);
+
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCorners}
-      onDragStart={handleDragStart}
-      onDragOver={handleDragOver}
-      onDragEnd={handleDragEnd}
-    >
-      <div className="flex gap-4 overflow-x-auto pb-4">
-        {COLUMNS.map((col) => (
-          <KanbanColumn
-            key={col.id}
-            id={col.id}
-            title={col.title}
-            colorClass={col.colorClass}
-            themes={columns[col.id]}
-          />
-        ))}
+    <>
+      {/* Week filter */}
+      <div className="flex items-center gap-3 mb-6">
+        <label className="text-text-muted text-sm">Semana:</label>
+        <select
+          value={selectedWeek}
+          onChange={(e) => setSelectedWeek(e.target.value)}
+          className="bg-white border border-border rounded-xl px-3 py-2 text-sm text-text focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary/40"
+        >
+          <option value="all">Todas</option>
+          {weeks.map((w) => (
+            <option key={`${w.year}-${w.week}`} value={`${w.year}-${w.week}`}>
+              Sem. {w.week}/{w.year}
+            </option>
+          ))}
+        </select>
+
+        {loadingScript && (
+          <span className="text-text-light text-xs animate-pulse">
+            Carregando roteiro...
+          </span>
+        )}
       </div>
 
-      <DragOverlay>
-        {activeTheme ? (
-          <div className="rotate-3">
-            <KanbanCard theme={activeTheme} />
-          </div>
-        ) : null}
-      </DragOverlay>
-    </DndContext>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCorners}
+        onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
+        onDragEnd={handleDragEnd}
+      >
+        <div className="flex gap-4 overflow-x-auto pb-4">
+          {COLUMNS.map((col) => (
+            <KanbanColumn
+              key={col.id}
+              id={col.id}
+              title={col.title}
+              colorClass={col.colorClass}
+              themes={filteredColumns[col.id]}
+              onCardClick={handleCardClick}
+            />
+          ))}
+        </div>
+
+        <DragOverlay>
+          {activeTheme ? (
+            <div className="rotate-3">
+              <KanbanCard theme={activeTheme} />
+            </div>
+          ) : null}
+        </DragOverlay>
+      </DndContext>
+
+      <ScriptModal
+        script={selectedScript}
+        onClose={() => setSelectedScript(null)}
+      />
+    </>
   );
 }

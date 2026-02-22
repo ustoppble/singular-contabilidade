@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
+import fs from "fs/promises";
+import path from "path";
 
-const SYSTEM_PROMPT = `\
+const DEFAULT_PROMPT = `\
 Voce eh um especialista em conteudo para redes sociais de um escritorio de contabilidade brasileiro.
 O usuario vai enviar um texto bruto — pode ser um case de cliente, uma noticia, uma dica, um insight pessoal, uma historia.
 Seu trabalho eh transformar esse texto em um roteiro de Reels para teleprompter em portugues brasileiro.
@@ -34,6 +36,17 @@ Regras:
 
 Retorne APENAS o roteiro no formato acima, sem explicacoes extras.`;
 
+async function getSystemPrompt(): Promise<string> {
+  try {
+    const promptsFile = path.join(process.cwd(), "content-machine", "prompts.json");
+    const raw = await fs.readFile(promptsFile, "utf-8");
+    const prompts = JSON.parse(raw);
+    return prompts.gerador || DEFAULT_PROMPT;
+  } catch {
+    return DEFAULT_PROMPT;
+  }
+}
+
 export async function POST(req: NextRequest) {
   const { text } = await req.json();
 
@@ -53,6 +66,8 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    const systemPrompt = await getSystemPrompt();
+
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
@@ -64,7 +79,7 @@ export async function POST(req: NextRequest) {
         model: "claude-sonnet-4-20250514",
         max_tokens: 1500,
         temperature: 0.7,
-        system: SYSTEM_PROMPT,
+        system: systemPrompt,
         messages: [
           {
             role: "user",
