@@ -28,49 +28,9 @@ const IconLightbulb = ({ className }: { className?: string }) => (
   </svg>
 )
 
-const blocos = [
-  {
-    icon: IconUser,
-    titulo: 'Quem sou eu',
-    texto: 'Meu nome é Luiza, sou sócia proprietária do Singular Contabilidade. Cresci dentro desse escritório — minha mãe fundou há',
-    destaque: '30 anos',
-    continuacao: '. Hoje trabalho principalmente com planejamento tributário de empresas maiores.',
-  },
-  {
-    icon: IconEye,
-    titulo: 'O que eu percebi',
-    texto: 'Ao longo de 10 anos de atuação, percebi algo preocupante: o MEI era sempre quem',
-    destaque: 'MAIS precisava de ajuda',
-    continuacao: '... e quem MENOS tinha acesso a orientação adequada. Empresas grandes têm diagnósticos, auditorias, relatórios. Mas o MEI? Fica navegando no escuro.',
-  },
-  {
-    icon: IconExclamation,
-    titulo: 'O problema real',
-    textoCompleto: true,
-    conteudo: [
-      { tipo: 'texto', valor: 'Mesmo quando eu dava ' },
-      { tipo: 'strong', valor: '2 horas de consultoria gratuita' },
-      { tipo: 'texto', valor: ' para um amigo MEI... uma semana depois as mesmas dúvidas voltavam. E pior: a internet está ' },
-      { tipo: 'strong', valor: 'CHEIA de informação errada' },
-      { tipo: 'texto', valor: '.' },
-    ],
-    callout: {
-      texto: 'Eu vi amigos aplicando "jeitinhos" que viram online.',
-      resultado: 'Multas de R$ 40 mil, R$ 100 mil... chegamos a atender um MEI com débito de mais de R$ 220 mil.',
-    },
-  },
-  {
-    icon: IconLightbulb,
-    titulo: 'A sacada',
-    texto: 'Foi aí que eu pensei: empresas grandes têm diagnósticos regulares. Por que o MEI não podia ter isso também? Não uma consultoria genérica. Mas um',
-    destaque: 'DIAGNÓSTICO TÉCNICO',
-    continuacao: ', com os números reais da empresa. Preto no branco.',
-  },
-]
-
 export default function Historia() {
   return (
-    <section id="historia" className="py-24 bg-primary text-white relative overflow-hidden">
+    <section id="historia" className="bg-primary text-white relative overflow-hidden">
       {/* Background pattern */}
       <div
         className="absolute inset-0 opacity-50"
@@ -79,109 +39,126 @@ export default function Historia() {
         }}
       />
 
-      <div className="w-full max-w-[1200px] mx-auto px-6 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start">
-          {/* Image */}
-          <div className="relative lg:sticky lg:top-32 max-lg:order-1">
-            <div className="rounded-3xl overflow-hidden">
-              <Image
-                src="/foto2.png"
-                alt="Luiza - Singular Contabilidade"
-                width={800}
-                height={600}
-                className="w-full aspect-[4/3] object-cover"
-              />
+      {/* Hero da seção - Imagem + Intro */}
+      <div className="relative z-10 pt-24 pb-16">
+        <div className="w-full max-w-[1200px] mx-auto px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-center">
+            {/* Imagem - 2 colunas */}
+            <div className="lg:col-span-2 relative">
+              <div className="rounded-3xl overflow-hidden">
+                <Image
+                  src="/foto2.png"
+                  alt="Luiza - Singular Contabilidade"
+                  width={500}
+                  height={600}
+                  className="w-full aspect-[4/5] object-cover"
+                />
+              </div>
+              {/* Badge */}
+              <div className="absolute -bottom-4 -right-4 lg:right-auto lg:-left-4 bg-secondary text-primary p-5 rounded-2xl shadow-xl">
+                <div className="font-display text-4xl leading-none">30</div>
+                <div className="text-sm">anos de mercado</div>
+              </div>
             </div>
 
-            {/* Badge */}
-            <div className="absolute -bottom-5 -right-5 bg-secondary text-primary p-6 rounded-2xl">
-              <div className="font-display text-5xl leading-none">30</div>
-              <div className="text-sm">anos de mercado</div>
+            {/* Intro - 3 colunas */}
+            <div className="lg:col-span-3">
+              <span className="inline-block text-xs text-secondary uppercase tracking-[0.15em] font-semibold mb-4">
+                Quem está por trás
+              </span>
+              <h2 className="text-[clamp(2rem,4vw,3rem)] mb-6">
+                Por que eu criei esse diagnóstico
+              </h2>
+              <p className="text-xl text-white/90 leading-relaxed mb-6">
+                Meu nome é <strong className="text-white">Luiza</strong>, sou sócia proprietária do Singular Contabilidade. Cresci dentro desse escritório — minha mãe fundou há <span className="text-secondary font-semibold">30 anos</span>.
+              </p>
+              <p className="text-lg text-white/70 leading-relaxed">
+                Hoje trabalho principalmente com planejamento tributário de empresas maiores. Mas ao longo de 10 anos percebi algo preocupante...
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Timeline de blocos */}
+      <div className="relative z-10 pb-24">
+        <div className="w-full max-w-[900px] mx-auto px-6">
+
+          {/* Bloco 1 - O que percebi */}
+          <div className="flex gap-6 mb-12">
+            <div className="flex flex-col items-center">
+              <div className="w-12 h-12 rounded-xl bg-secondary/20 flex items-center justify-center">
+                <IconEye className="w-6 h-6 text-secondary" />
+              </div>
+              <div className="w-px h-full bg-white/20 mt-4" />
+            </div>
+            <div className="flex-1 pb-8">
+              <h3 className="font-semibold text-lg text-secondary mb-3">O que eu percebi</h3>
+              <p className="text-white/85 leading-relaxed">
+                O MEI era sempre quem <span className="text-secondary font-bold">MAIS precisava de ajuda</span>... e quem MENOS tinha acesso a orientação adequada. Empresas grandes têm diagnósticos, auditorias, relatórios. Mas o MEI? Fica navegando no escuro.
+              </p>
             </div>
           </div>
 
-          {/* Content */}
-          <div className="max-lg:order-2">
-            <span className="inline-block text-xs text-secondary uppercase tracking-[0.15em] font-semibold mb-4">
-              Quem está por trás
-            </span>
-            <h2 className="text-[clamp(2rem,4vw,3rem)] mb-12">
-              Por que eu criei esse diagnóstico
-            </h2>
-
-            {/* Blocos com ícones */}
-            <div className="space-y-10">
-              {blocos.map((bloco, index) => (
-                <div key={index} className="flex gap-5">
-                  {/* Ícone */}
-                  <div className="flex-shrink-0">
-                    <div className="w-12 h-12 rounded-xl bg-secondary/20 flex items-center justify-center">
-                      <bloco.icon className="w-6 h-6 text-secondary" />
-                    </div>
-                  </div>
-
-                  {/* Conteúdo */}
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-lg text-secondary mb-3">
-                      {bloco.titulo}
-                    </h3>
-
-                    {bloco.textoCompleto ? (
-                      <>
-                        <p className="text-white/85 leading-relaxed mb-4">
-                          {bloco.conteudo?.map((parte, i) =>
-                            parte.tipo === 'strong' ? (
-                              <strong key={i} className="text-white font-semibold">{parte.valor}</strong>
-                            ) : (
-                              <span key={i}>{parte.valor}</span>
-                            )
-                          )}
-                        </p>
-                        {bloco.callout && (
-                          <div className="bg-white/10 rounded-xl p-5 border-l-4 border-secondary">
-                            <p className="text-white/70 text-sm mb-2">{bloco.callout.texto}</p>
-                            <p className="text-white font-semibold">
-                              Resultado? <span className="text-secondary">{bloco.callout.resultado}</span>
-                            </p>
-                          </div>
-                        )}
-                      </>
-                    ) : (
-                      <p className="text-white/85 leading-relaxed">
-                        {bloco.texto}
-                        {bloco.destaque && (
-                          <span className="text-secondary font-bold"> {bloco.destaque}</span>
-                        )}
-                        {bloco.continuacao}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              ))}
+          {/* Bloco 2 - O problema real */}
+          <div className="flex gap-6 mb-12">
+            <div className="flex flex-col items-center">
+              <div className="w-12 h-12 rounded-xl bg-secondary/20 flex items-center justify-center">
+                <IconExclamation className="w-6 h-6 text-secondary" />
+              </div>
+              <div className="w-px h-full bg-white/20 mt-4" />
             </div>
-
-            {/* Bloco de destaque final */}
-            <div className="mt-12 bg-gradient-to-r from-secondary/20 to-secondary/5 rounded-2xl p-8 border border-secondary/30">
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0">
-                  <div className="w-16 h-16 rounded-full bg-secondary/30 flex items-center justify-center">
-                    <span className="font-display text-2xl text-secondary">4M</span>
-                  </div>
-                </div>
-                <div>
-                  <p className="text-xl text-white font-semibold mb-2">
-                    Só em 2025, mais de <span className="text-secondary">4 MILHÕES</span> de MEIs foram excluídos do regime.
-                  </p>
-                  <p className="text-white/70">
-                    A maioria não fez isso por opção — foi por falta de conhecimento. E essas exclusões geram dívidas que vão carregar pro resto da vida.
-                  </p>
-                  <p className="text-secondary font-semibold mt-3">
-                    Porque dívida com a Receita Federal NÃO CADUCA.
-                  </p>
-                </div>
+            <div className="flex-1 pb-8">
+              <h3 className="font-semibold text-lg text-secondary mb-3">O problema real</h3>
+              <p className="text-white/85 leading-relaxed mb-4">
+                Mesmo quando eu dava <strong className="text-white">2 horas de consultoria gratuita</strong> para um amigo MEI... uma semana depois as mesmas dúvidas voltavam. E pior: a internet está <strong className="text-white">CHEIA de informação errada</strong>.
+              </p>
+              <div className="bg-white/10 rounded-xl p-6 border-l-4 border-secondary">
+                <p className="text-white/70 mb-2">Eu vi amigos aplicando "jeitinhos" que viram online.</p>
+                <p className="text-white text-lg font-semibold">
+                  Resultado? <span className="text-secondary">Multas de R$ 40 mil, R$ 100 mil... chegamos a atender um MEI com débito de mais de R$ 220 mil.</span>
+                </p>
               </div>
             </div>
           </div>
+
+          {/* Bloco 3 - A sacada */}
+          <div className="flex gap-6 mb-12">
+            <div className="flex flex-col items-center">
+              <div className="w-12 h-12 rounded-xl bg-secondary/20 flex items-center justify-center">
+                <IconLightbulb className="w-6 h-6 text-secondary" />
+              </div>
+            </div>
+            <div className="flex-1">
+              <h3 className="font-semibold text-lg text-secondary mb-3">A sacada</h3>
+              <p className="text-white/85 leading-relaxed">
+                Foi aí que eu pensei: empresas grandes têm diagnósticos regulares. Por que o MEI não podia ter isso também? Não uma consultoria genérica. Mas um <span className="text-secondary font-bold">DIAGNÓSTICO TÉCNICO</span>, com os números reais da empresa. Preto no branco.
+              </p>
+            </div>
+          </div>
+
+          {/* Bloco destaque final */}
+          <div className="bg-gradient-to-r from-secondary/20 to-secondary/5 rounded-2xl p-8 border border-secondary/30 mt-8">
+            <div className="flex flex-col sm:flex-row items-start gap-6">
+              <div className="flex-shrink-0">
+                <div className="w-20 h-20 rounded-full bg-secondary/30 flex items-center justify-center">
+                  <span className="font-display text-3xl text-secondary">4M</span>
+                </div>
+              </div>
+              <div>
+                <p className="text-2xl text-white font-semibold mb-3">
+                  Só em 2025, mais de <span className="text-secondary">4 MILHÕES</span> de MEIs foram excluídos do regime.
+                </p>
+                <p className="text-white/70 mb-4">
+                  A maioria não fez isso por opção — foi por falta de conhecimento. E essas exclusões geram dívidas que vão carregar pro resto da vida.
+                </p>
+                <p className="text-secondary font-bold text-lg">
+                  Porque dívida com a Receita Federal NÃO CADUCA.
+                </p>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </section>

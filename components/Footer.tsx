@@ -7,8 +7,8 @@ const links = [
 ]
 
 const legal = [
-  { label: 'Política de Privacidade', href: '#' },
-  { label: 'Termos de Uso', href: '#' },
+  { label: 'Política de Privacidade', href: '/privacidade' },
+  { label: 'Termos de Uso', href: '/termos' },
 ]
 
 export default function Footer() {
@@ -103,13 +103,13 @@ export default function Footer() {
             </p>
             <div className="flex gap-4">
               {legal.map((item) => (
-                <a
+                <Link
                   key={item.label}
                   href={item.href}
                   className="text-white/50 text-sm hover:text-white/70 transition-colors"
                 >
                   {item.label}
-                </a>
+                </Link>
               ))}
             </div>
           </div>
